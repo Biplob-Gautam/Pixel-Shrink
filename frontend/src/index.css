@@ -1,31 +1,175 @@
 @import "tailwindcss";
 
 :root {
+  /* ===========================
+       BACKGROUND
+    =========================== */
 
-    /* Background */
-    --background: #1F2937;
-    --surface: #2D3748;
-    --surface-light: #374151;
+  --background: #f5f7fa;
+  --surface: #ffffff;
+  --surface-secondary: #edf2f7;
 
-    --border: #4B5563;
+  /* ===========================
+       BORDERS
+    =========================== */
 
-    /* Text */
-    --text-primary: #F9FAFB;
-    --text-secondary: #D1D5DB;
-    --text-muted: #9CA3AF;
+  --border: #d7dee8;
 
-    /* Accent */
-    --primary: #10B981;
-    --primary-hover: #059669;
-    --secondary: #38BDF8;
+  /* ===========================
+       TEXT
+    =========================== */
 
-    /* States */
-    --success: #22C55E;
-    --warning: #F59E0B;
-    --danger: #EF4444;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #6b7280;
 
-    --radius: 18px;
+  /* ===========================
+       BRAND
+    =========================== */
 
-    --shadow: 0 10px 30px rgba(0,0,0,.15);
+  --primary: #0ea5e9;
+  --primary-hover: #0284c7;
 
+  --secondary: #fb7185;
+  --secondary-hover: #f43f5e;
+
+  /* ===========================
+       STATUS
+    =========================== */
+
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
+  /* ===========================
+       SHADOW
+    =========================== */
+
+  --shadow-sm: 0 4px 12px rgba(17, 24, 39, 0.06);
+
+  --shadow-md: 0 10px 30px rgba(17, 24, 39, 0.08);
+
+  --shadow-lg: 0 20px 50px rgba(17, 24, 39, 0.12);
+}
+
+/* ==========================================
+   GLOBAL RESET
+========================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+
+  color: var(--text-primary);
+
+  background-color: var(--background);
+
+  min-height: 100vh;
+
+  overflow-x: hidden;
+}
+
+/* ==========================================
+   HERO FONT
+========================================== */
+
+.hero-font {
+  font-family: "Space Grotesk", sans-serif;
+}
+
+/* ==========================================
+   TEXTURE
+========================================== */
+
+body::before {
+  content: "";
+
+  position: fixed;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  opacity: 0.05;
+
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(0, 0, 0, 0.16) 1px,
+    transparent 0
+  );
+
+  background-size: 26px 26px;
+
+  z-index: -2;
+}
+
+/* ==========================================
+   RADIAL GLOW
+========================================== */
+
+body::after {
+  content: "";
+
+  position: fixed;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle at top right,
+
+      rgba(14, 165, 233, 0.12),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at bottom left,
+
+      rgba(251, 113, 133, 0.1),
+      transparent 40%
+    );
+
+  z-index: -3;
+}
+
+/* ==========================================
+   COMMON
+========================================== */
+
+button {
+  cursor: pointer;
+
+  transition: 0.25s ease;
+}
+
+img {
+  display: block;
+
+  max-width: 100%;
+}
+
+a {
+  text-decoration: none;
+
+  color: inherit;
+}
+
+input,
+textarea,
+select {
+  outline: none;
+
+  border: none;
+
+  font: inherit;
 }
