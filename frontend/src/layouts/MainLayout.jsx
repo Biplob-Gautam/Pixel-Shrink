@@ -10,7 +10,7 @@ export default function MainLayout({ children }) {
 
       <Navbar />
 
-      <main className="page-container py-16">{children}</main>
+      <main className="page-container pt-10 pb-16">{children}</main>
 
       <Footer />
     </div>

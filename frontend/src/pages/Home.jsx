@@ -9,13 +9,13 @@ import { Cloud, Gauge, ShieldCheck } from "lucide-react";
 export default function Home() {
   return (
     <MainLayout>
-      <section className="mx-auto mb-24 max-w-4xl text-center">
+      <section className="mx-auto mb-20 max-w-4xl text-center">
         <h1 className="mb-6 font-heading text-6xl font-bold leading-tight">
           Optimize images
           <span className="text-gradient"> without compromising quality</span>
         </h1>
 
-        <p className="mx-auto mb-14 max-w-2xl text-lg leading-8 text-slate-400">
+        <p className="mx-auto mb-8 max-w-2xl text-lg leading-8 text-slate-400">
           Upload once. Compress instantly. Powered by AWS S3 & Lambda.
         </p>
 
