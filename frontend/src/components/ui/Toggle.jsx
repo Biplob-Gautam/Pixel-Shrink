@@ -1,7 +1,7 @@
 export default function Toggle({ checked, onChange, label }) {
   return (
     <label className="flex items-center justify-between">
-      <span className="text-sm text-text-secondary">{label}</span>
+      <span className="text-sm text-slate-300">{label}</span>
 
       <button
         type="button"
@@ -14,20 +14,20 @@ export default function Toggle({ checked, onChange, label }) {
           transition-all
           duration-300
 
-          ${checked ? "bg-primary" : "bg-border"}
+          ${checked ? "bg-cyan-500" : "bg-[#2E354A]"}
         `}
       >
         <span
           className={`
-            absolute
-            top-1
-            h-5
-            w-5
-            rounded-full
-            bg-white
-            transition-all
+          absolute
+          top-1
+          h-5
+          w-5
+          rounded-full
+          bg-white
+          transition-all
 
-            ${checked ? "left-6" : "left-1"}
+          ${checked ? "left-6" : "left-1"}
           `}
         />
       </button>

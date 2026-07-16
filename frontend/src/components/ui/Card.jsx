@@ -2,15 +2,15 @@ export default function Card({ children, className = "" }) {
   return (
     <div
       className={`
-      rounded-card
+      rounded-2xl
       border
-      border-border
-      bg-surface
+      border-[#2E354A]
+      bg-[#1E2230]
       p-6
       transition-all
       duration-300
       hover:-translate-y-1
-      hover:border-primary/40
+      hover:border-cyan-500/40
       ${className}
       `}
     >
