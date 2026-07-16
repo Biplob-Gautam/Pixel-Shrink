@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
 
 import { Link } from "react-router-dom";
 import Logo from "../shared/Logo";
 import Button from "../ui/Button";
 
 export default function Navbar() {
+  const { isAuthenticated, logout } = useAuth();
+
   return (
     <header
       className={
@@ -22,12 +25,25 @@ export default function Navbar() {
             How it works
           </Link>
 
-          <Link to="/login">
-            <Button variant="secondary">Login</Button>
-          </Link>
-          <Link to="/register">
-            <Button variant="secondary">Get Started</Button>
-          </Link>
+          {isAuthenticated ? (
+            <>
+              <Link to="/dashboard">
+                <Button variant="secondary">Dashboard</Button>
+              </Link>
+
+              <Button onClick={logout}>Logout</Button>
+            </>
+          ) : (
+            <>
+              <Link to="/login">
+                <Button variant="secondary">Login</Button>
+              </Link>
+
+              <Link to="/register">
+                <Button>Get Started</Button>
+              </Link>
+            </>
+          )}
         </nav>
       </div>
     </header>

@@ -38,7 +38,7 @@ export function AuthProvider({ children }) {
     return response;
   };
 
-  const register = async (userData) => {
+  const registerUser = async (userData) => {
     const response = await registerUser(userData);
 
     return response;
@@ -58,7 +58,7 @@ export function AuthProvider({ children }) {
         user,
         loading,
         login,
-        register,
+        registerUser,
         logout,
         isAuthenticated: !!user,
       }}
