@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Home from "../pages/Home";
-// import Login from "../pages/Login";
-// import Register from "../pages/Register";
-// import Dashboard from "../pages/Dashboard";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
+import Dashboard from "../pages/Dashboard";
 import Processing from "../pages/Processing";
-// import Result from "../pages/Result";
+import Result from "../pages/Result";
 
 export default function AppRoutes() {
   return (
