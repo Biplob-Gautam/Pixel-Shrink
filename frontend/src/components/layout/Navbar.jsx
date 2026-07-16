@@ -27,14 +27,14 @@ export default function Navbar() {
             to="/"
             className="text-sm text-slate-400 transition hover:text-white"
           >
-            How it Works
+            How it works
           </Link>
 
           <Link to="/login">
-            <Button variant="secondary">Sign In</Button>
+            <Button variant="secondary">Login</Button>
           </Link>
           <Link to="/register">
-          <Button variant="secondary">Get Started</Button>
+            <Button variant="secondary">Get Started</Button>
           </Link>
         </nav>
       </div>
