@@ -22,7 +22,7 @@ export default function Navbar() {
       <div className="page-container flex h-20 items-center justify-between">
         <Logo />
 
-        <nav className="flex items-center gap-6">
+        <nav className="flex items-center gap-3">
           <Link
             to="/"
             className="text-sm text-slate-400 transition hover:text-white"
@@ -32,6 +32,9 @@ export default function Navbar() {
 
           <Link to="/login">
             <Button variant="secondary">Sign In</Button>
+          </Link>
+          <Link to="/register">
+          <Button variant="secondary">Get Started</Button>
           </Link>
         </nav>
       </div>
