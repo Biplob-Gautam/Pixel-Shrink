@@ -5,7 +5,7 @@ export default function Logo({ className = "" }) {
     <div className={`flex items-center gap-3 ${className}`}>
       <div
         className="flex h-11 w-11 items-center justify-center rounded-xl
-        bg-gradient-to-br from-primary to-secondary shadow-lg"
+        bg-linear-to-br from-primary to-secondary shadow-lg"
       >
         <Box size={22} className="text-white" />
       </div>
