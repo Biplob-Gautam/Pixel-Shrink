@@ -5,7 +5,7 @@ import {
   logoutUser,
   registerUser,
   getCurrentUser,
-} from "../services/auth.service";
+} from "../services/auth.services.js";
 
 const AuthContext = createContext(null);
 
@@ -45,9 +45,11 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    await logoutUser();
-
-    setUser(null);
+    try {
+      await logoutUser();
+    } finally {
+      setUser(null);
+    }
   };
 
   return (
