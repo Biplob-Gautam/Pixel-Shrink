@@ -21,6 +21,9 @@ export default function Register() {
   } = useForm();
 
   const onSubmit = async (data) => {
+    console.log("Register submitted");
+    console.log(data);
+
     try {
       await registerUser(data);
 
@@ -28,7 +31,13 @@ export default function Register() {
 
       navigate("/login");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Registration failed");
+      console.log("FULL ERROR:", error);
+      console.log("ERROR RESPONSE:", error.response);
+      console.log("ERROR REQUEST:", error.request);
+
+      toast.error(
+        error.response?.data?.message || error.message || "Registration failed",
+      );
     }
   };
 

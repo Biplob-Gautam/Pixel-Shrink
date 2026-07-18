@@ -1,10 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 import {
-  loginUser,
-  logoutUser,
-  registerUser,
-  getCurrentUser,
+  loginUser as loginUserService,
+  logoutUser as logoutUserService,
+  registerUser as registerUserService,
+  getCurrentUser as getCurrentUserService,
 } from "../services/auth.services.js";
 
 const AuthContext = createContext(null);
@@ -20,7 +20,7 @@ export function AuthProvider({ children }) {
 
   const initializeAuth = async () => {
     try {
-      const response = await getCurrentUser();
+      const response = await getCurrentUserService();
 
       setUser(response.data);
     } catch (error) {
@@ -31,7 +31,7 @@ export function AuthProvider({ children }) {
   };
 
   const login = async (credentials) => {
-    const response = await loginUser(credentials);
+    const response = await loginUserService(credentials);
 
     setUser(response.data);
 
@@ -39,14 +39,14 @@ export function AuthProvider({ children }) {
   };
 
   const registerUser = async (userData) => {
-    const response = await registerUser(userData);
+    const response = await registerUserService(userData);
 
     return response;
   };
 
   const logout = async () => {
     try {
-      await logoutUser();
+      await logoutUserService();
     } finally {
       setUser(null);
     }

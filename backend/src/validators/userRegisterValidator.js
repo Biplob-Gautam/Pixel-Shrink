@@ -9,7 +9,10 @@ export const loginValidator = () => {
       .isEmail()
       .withMessage("Please provide a valid email"),
 
-    body("password").trim().notEmpty().withMessage("Password is required").isStrongPassword(),
+    body("password")
+      .trim()
+      .notEmpty()
+      .withMessage("Password is required"),
   ];
 };
 
@@ -38,8 +41,7 @@ export const registerValidator = () => {
       .notEmpty()
       .withMessage("Password is required")
       .isLength({ min: 8 })
-      .withMessage("Password must be at least 8 characters long")
-      .isStrongPassword(),
+      .withMessage("Password must be at least 8 characters long"),
 
     body("fullname")
       .optional()
@@ -48,5 +50,3 @@ export const registerValidator = () => {
       .withMessage("Full name must be between 2 and 50 characters"),
   ];
 };
-
-
