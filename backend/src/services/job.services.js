@@ -19,8 +19,8 @@ export const createJob = async ({
 
     processingOptions,
 
-//    status: "UPLOADING",//change to it back
-    status: "COMPLETED"
+   status: "UPLOADING",
+
   });
 };
 
