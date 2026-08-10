@@ -5,6 +5,26 @@ provider:
   runtime: nodejs22.x
   region: ap-south-1
 
+  environment:
+    ORIGINAL_BUCKET: pixelshrink-original-images
+    PROCESSED_BUCKET: pixelshrink-processed-images
+
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+          Resource:
+            - arn:aws:s3:::pixelshrink-original-images/*
+
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+          Resource:
+            - arn:aws:s3:::pixelshrink-processed-images/*
+
+
 functions:
-  hello:
-    handler: handler.hello
+  processImage:
+    handler: handler.processImage

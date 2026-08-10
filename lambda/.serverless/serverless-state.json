@@ -8,16 +8,40 @@
       "name": "aws",
       "runtime": "nodejs22.x",
       "region": "ap-south-1",
+      "environment": {
+        "ORIGINAL_BUCKET": "pixelshrink-original-images",
+        "PROCESSED_BUCKET": "pixelshrink-processed-images"
+      },
+      "iam": {
+        "role": {
+          "statements": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:GetObject"
+              ],
+              "Resource": "arn:aws:s3:::pixelshrink-original-images/*"
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:PutObject"
+              ],
+              "Resource": "arn:aws:s3:::pixelshrink-processed-images/*"
+            }
+          ]
+        }
+      },
       "stage": "dev",
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
         "AWSTemplateFormatVersion": "2010-09-09",
         "Description": "The AWS CloudFormation template for this Serverless application",
         "Resources": {
-          "HelloLogGroup": {
+          "ProcessImageLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/pixelshrink-lambda-dev-hello"
+              "LogGroupName": "/aws/lambda/pixelshrink-lambda-dev-processImage"
             }
           },
           "IamRoleLambdaExecution": {
@@ -77,6 +101,12 @@
                             "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/pixelshrink-lambda-dev*:*:*"
                           }
                         ]
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iam\"][\"role\"][\"statements\"][0]"
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iam\"][\"role\"][\"statements\"][1]"
                       }
                     ]
                   }
@@ -98,18 +128,24 @@
               }
             }
           },
-          "HelloLambdaFunction": {
+          "ProcessImageLambdaFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-1db6f6a2-1e83",
-                "S3Key": "serverless/pixelshrink-lambda/dev/1786216901310-2026-08-08T19:21:41.310Z/pixelshrink-lambda.zip"
+                "S3Key": "serverless/pixelshrink-lambda/dev/1786344363611-2026-08-10T06:46:03.611Z/pixelshrink-lambda.zip"
               },
-              "Handler": "handler.hello",
+              "Handler": "handler.processImage",
               "Runtime": "nodejs22.x",
-              "FunctionName": "pixelshrink-lambda-dev-hello",
+              "FunctionName": "pixelshrink-lambda-dev-processImage",
               "MemorySize": 1024,
               "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "ORIGINAL_BUCKET": "pixelshrink-original-images",
+                  "PROCESSED_BUCKET": "pixelshrink-processed-images"
+                }
+              },
               "Role": {
                 "Fn::GetAtt": [
                   "IamRoleLambdaExecution",
@@ -118,17 +154,17 @@
               }
             },
             "DependsOn": [
-              "HelloLogGroup"
+              "ProcessImageLogGroup"
             ]
           },
-          "HelloLambdaVersionK3L5FHBnLs1ZLysY3bdfe5ui3zjJRbdoYAUY8EI0g": {
+          "ProcessImageLambdaVersion7n8ZFtIJylMD1M8QAl6GbbEVD24IZqkztBgKJ7gQ50c": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
-                "Ref": "HelloLambdaFunction"
+                "Ref": "ProcessImageLambdaFunction"
               },
-              "CodeSha256": "8Gey9XWiZ9nc7m/OmVkKy2bzRrfbzwwLbjJzmEoUD2g="
+              "CodeSha256": "CeqabNQ4kTWmC71rBxNKLFwswP6Gd5nm6cMF7ZNdpOU="
             }
           }
         },
@@ -139,13 +175,13 @@
               "Name": "sls-pixelshrink-lambda-dev-ServerlessDeploymentBucketName"
             }
           },
-          "HelloLambdaFunctionQualifiedArn": {
+          "ProcessImageLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "HelloLambdaVersionK3L5FHBnLs1ZLysY3bdfe5ui3zjJRbdoYAUY8EI0g"
+              "Ref": "ProcessImageLambdaVersion7n8ZFtIJylMD1M8QAl6GbbEVD24IZqkztBgKJ7gQ50c"
             },
             "Export": {
-              "Name": "sls-pixelshrink-lambda-dev-HelloLambdaFunctionQualifiedArn"
+              "Name": "sls-pixelshrink-lambda-dev-ProcessImageLambdaFunctionQualifiedArn"
             }
           }
         }
@@ -154,16 +190,16 @@
     },
     "pluginsData": {},
     "functions": {
-      "hello": {
-        "handler": "handler.hello",
+      "processImage": {
+        "handler": "handler.processImage",
         "events": [],
-        "name": "pixelshrink-lambda-dev-hello",
+        "name": "pixelshrink-lambda-dev-processImage",
         "package": {},
         "memory": 1024,
         "timeout": 6,
         "runtime": "nodejs22.x",
         "vpc": {},
-        "versionLogicalId": "HelloLambdaVersionK3L5FHBnLs1ZLysY3bdfe5ui3zjJRbdoYAUY8EI0g"
+        "versionLogicalId": "ProcessImageLambdaVersion7n8ZFtIJylMD1M8QAl6GbbEVD24IZqkztBgKJ7gQ50c"
       }
     },
     "configValidationMode": "warn",
@@ -183,7 +219,7 @@
     "artifact": "C:\\Users\\KIIT0001\\Desktop\\Pixel Shrink\\lambda\\.serverless\\pixelshrink-lambda.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/pixelshrink-lambda/dev/1786216901310-2026-08-08T19:21:41.310Z",
+    "artifactDirectoryName": "serverless/pixelshrink-lambda/dev/1786344363611-2026-08-10T06:46:03.611Z",
     "artifact": "pixelshrink-lambda.zip"
   }
 }

@@ -8,6 +8,7 @@ import {
   deleteJobById,
   getJobStatus as getJobStatusById,
 } from "../services/job.services.js";
+import { generateUploadUrl } from "../services/s3.services.js";
 
 const uploadImage = asyncHandler(async (req, res) => {
   const {
@@ -124,9 +125,38 @@ const deleteJob = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, null, "Job deleted successfully"));
 });
 
-export { uploadImage, getJobs, getJob, getJobStatus, downloadJob, deleteJob };
-
 // TODO:
 // Upload original image to S3
+const getUploadUrl = asyncHandler(async (req, res) => {
+  const { fileName, contentType } = req.body;
+
+  const key = `uploads/${Date.now()}-${fileName}`;
+
+  const uploadUrl = await generateUploadUrl({
+    key,
+    contentType,
+  });
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        uploadUrl,
+        key,
+      },
+      "Upload URL generated",
+    ),
+  );
+});
 // Trigger Lambda
 // Update Job Status
+
+export {
+  uploadImage,
+  getJobs,
+  getJob,
+  getJobStatus,
+  downloadJob,
+  deleteJob,
+  getUploadUrl,
+};
