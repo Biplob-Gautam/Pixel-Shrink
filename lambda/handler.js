@@ -41,7 +41,8 @@ export const processImage = async (event) => {
     })
     .toBuffer();
 
-  const outputKey = `processed/${key}`;
+  const fileName = key.split("/").pop();
+  const outputKey = `processed/${fileName}`;
 
   await s3.send(
     new PutObjectCommand({
