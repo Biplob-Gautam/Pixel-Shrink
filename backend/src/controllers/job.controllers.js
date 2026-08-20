@@ -2,7 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { ApiError } from "../utils/api-error.js";
 import {
-  createJob,
+  createUploadJob,
   getUserJobs,
   getJobById,
   deleteJobById,
@@ -130,7 +130,18 @@ const deleteJob = asyncHandler(async (req, res) => {
 const getUploadUrl = asyncHandler(async (req, res) => {
   const { fileName, contentType } = req.body;
 
-  const key = `uploads/${Date.now()}-${fileName}`;
+  const owner = req.user?._id ?? null;
+
+  const job = await createUploadJob({
+    owner,
+    contentType,
+  });
+
+  const key = `uploads/${job._id}/${fileName}`;
+
+  job.originalImage.key = key;
+
+  await job.save();
 
   const uploadUrl = await generateUploadUrl({
     key,
@@ -141,6 +152,7 @@ const getUploadUrl = asyncHandler(async (req, res) => {
     new ApiResponse(
       200,
       {
+        jobId: job._id,
         uploadUrl,
         key,
       },
@@ -151,6 +163,36 @@ const getUploadUrl = asyncHandler(async (req, res) => {
 // Trigger Lambda
 // Update Job Status
 
+const completeJob = asyncHandler(async (req, res) => {
+  const { jobId } = req.params;
+
+  const { processedKey, processedSize } = req.body;
+
+  const job = await getJobById(jobId);
+
+  if (!job) {
+    throw new ApiError(404, "Job not found");
+  }
+
+  job.status = "COMPLETED";
+
+  job.processedImage = {
+    key: processedKey,
+    size: processedSize,
+  };
+
+  job.processingCompletedAt = new Date();
+
+  await job.save();
+  if (req.headers["x-lambda-secret"] !== process.env.LAMBDA_SECRET) {
+    throw new ApiError(401, "Unauthorized");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, job, "Job completed successfully"));
+});
+
 export {
   uploadImage,
   getJobs,
@@ -159,4 +201,5 @@ export {
   downloadJob,
   deleteJob,
   getUploadUrl,
+  completeJob,
 };

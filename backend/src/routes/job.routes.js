@@ -8,6 +8,7 @@ import {
   downloadJob,
   deleteJob,
   getUploadUrl,
+  completeJob,
 } from "../controllers/job.controllers.js";
 
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -20,7 +21,7 @@ router.get("/:jobId/status", getJobStatus);
 router.get("/:jobId/download", downloadJob);
 router.get("/:jobId", getJob);
 router.post("/upload-url", getUploadUrl);
-
+router.post("/:jobId/complete", completeJob);
 // Protected Routes
 router.get("/", verifyJWT, getJobs);
 router.delete("/:jobId", verifyJWT, deleteJob);

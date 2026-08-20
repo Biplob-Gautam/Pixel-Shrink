@@ -19,6 +19,8 @@ export const processImage = async (event) => {
   const record = event.Records[0];
 
   const key = decodeURIComponent(record.s3.object.key.replace(/\+/g, " "));
+  const pathParts = key.split("/");
+  const jobId = pathParts[1];
 
   console.log("Processing:", key);
 
@@ -52,6 +54,17 @@ export const processImage = async (event) => {
       ContentType: "image/jpeg",
     }),
   );
+  await fetch(`${process.env.BACKEND_URL}/api/v1/jobs/${jobId}/complete`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-lambda-secret": process.env.LAMBDA_SECRET,
+    },
+    body: JSON.stringify({
+      processedKey: outputKey,
+      processedSize: processedBuffer.length,
+    }),
+  });
 
   console.log("Uploaded:", outputKey);
 

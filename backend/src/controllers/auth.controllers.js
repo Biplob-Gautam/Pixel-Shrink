@@ -7,7 +7,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 const generateAndSaveTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
-    if(!user) throw new ApiError(404, "User not found")
+    if (!user) throw new ApiError(404, "User not found");
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
 
@@ -86,31 +86,6 @@ const login = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, loggedInUser, "User logged in successfully"));
 });
 
-const logout = asyncHandler(async (req, res) => {
-  await User.findByIdAndUpdate(
-    req.user._id,
-    { $set: { refreshToken: "" } },
-    { new: true },
-  );
-  const options = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-  };
-
-  res
-    .status(200)
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
-    .json(new ApiResponse(200, null, "User logged out"));
-});
-
-const getUser = asyncHandler(async (req, res) => {
-  return res
-    .status(200)
-    .json(new ApiResponse(200, req.user, "Current user fetched successfully"));
-});
-
 const refreshAccessToken = asyncHandler(async (req, res) => {
   const incomingRefreshToken =
     req.cookies.refreshToken || req.body.refreshToken;
@@ -145,17 +120,40 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     res
       .status(200)
       .cookie("accessToken", accessToken, options)
-      // .cookie("refreshToken", refreshToken, options)
       .cookie("refreshToken", newRefreshToken, options)
       .json(
         new ApiResponse(
           200,
-          // { accessToken, refreshToken: newRefreshToken },
           null,
           "Access Token Refreshed",
         ),
       )
   );
+});
+
+const logout = asyncHandler(async (req, res) => {
+  await User.findByIdAndUpdate(
+    req.user._id,
+    { $set: { refreshToken: "" } },
+    { new: true },
+  );
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  };
+
+  res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, null, "User logged out"));
+});
+
+const getUser = asyncHandler(async (req, res) => {
+  return res
+    .status(200)
+    .json(new ApiResponse(200, req.user, "Current user fetched successfully"));
 });
 
 export { registerUser, login, logout, getUser, refreshAccessToken };

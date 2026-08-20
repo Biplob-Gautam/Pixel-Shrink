@@ -1,26 +1,16 @@
 import { ImageJob } from "../models/imageJob.model.js";
 
-export const createJob = async ({
-  owner = null,
-  isGuest = true,
-  file,
-  processingOptions,
-}) => {
+export const createUploadJob = async ({ owner = null, contentType }) => {
   return await ImageJob.create({
     owner,
-    isGuest,
+
+    isGuest: owner === null,
+
+    status: "UPLOADING",
 
     originalImage: {
-      key: "",
-      url: "",
-      size: file.size,
-      mimeType: file.mimetype,
+      mimeType: contentType,
     },
-
-    processingOptions,
-
-   status: "UPLOADING",
-
   });
 };
 

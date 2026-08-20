@@ -105,7 +105,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-1db6f6a2-1e83",
-          "S3Key": "serverless/pixelshrink-lambda/dev/1786344363611-2026-08-10T06:46:03.611Z/pixelshrink-lambda.zip"
+          "S3Key": "serverless/pixelshrink-lambda/dev/1786424565673-2026-08-11T05:02:45.673Z/pixelshrink-lambda.zip"
         },
         "Handler": "handler.processImage",
         "Runtime": "nodejs22.x",
@@ -129,14 +129,14 @@
         "ProcessImageLogGroup"
       ]
     },
-    "ProcessImageLambdaVersion7n8ZFtIJylMD1M8QAl6GbbEVD24IZqkztBgKJ7gQ50c": {
+    "ProcessImageLambdaVersioncXkAuObtlKId5JhjFtZGFHprjLG8QHOS0rsUkHajs": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ProcessImageLambdaFunction"
         },
-        "CodeSha256": "CeqabNQ4kTWmC71rBxNKLFwswP6Gd5nm6cMF7ZNdpOU="
+        "CodeSha256": "W03rgPDFNmHis7RRnEBDRkSZFp4rZBMAQaefwSZR3wQ="
       }
     }
   },
@@ -150,7 +150,7 @@
     "ProcessImageLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ProcessImageLambdaVersion7n8ZFtIJylMD1M8QAl6GbbEVD24IZqkztBgKJ7gQ50c"
+        "Ref": "ProcessImageLambdaVersioncXkAuObtlKId5JhjFtZGFHprjLG8QHOS0rsUkHajs"
       },
       "Export": {
         "Name": "sls-pixelshrink-lambda-dev-ProcessImageLambdaFunctionQualifiedArn"
