@@ -27,4 +27,4 @@ provider:
 
 functions:
   processImage:
-    handler: handler.processImage
+    handler: handler.processImageHandler

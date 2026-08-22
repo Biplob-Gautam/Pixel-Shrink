@@ -12,6 +12,7 @@ import {
 } from "../controllers/job.controllers.js";
 
 import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { optionalAuth} from "../middlewares/optionalAuth.middleware.js";
 
 const router = Router();
 
@@ -20,7 +21,7 @@ router.post("/upload", upload.single("image"), uploadImage);
 router.get("/:jobId/status", getJobStatus);
 router.get("/:jobId/download", downloadJob);
 router.get("/:jobId", getJob);
-router.post("/upload-url", getUploadUrl);
+router.post("/upload-url",optionalAuth, getUploadUrl);
 router.post("/:jobId/complete", completeJob);
 // Protected Routes
 router.get("/", verifyJWT, getJobs);

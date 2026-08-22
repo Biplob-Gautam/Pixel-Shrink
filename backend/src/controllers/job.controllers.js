@@ -137,7 +137,7 @@ const getUploadUrl = asyncHandler(async (req, res) => {
     contentType,
   });
 
-  const key = `uploads/${job._id}/${fileName}`;
+  const key = `uploads/${job._id}-${fileName}`;
 
   job.originalImage.key = key;
 

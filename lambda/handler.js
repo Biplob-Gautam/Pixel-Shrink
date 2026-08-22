@@ -4,7 +4,7 @@ import {
   PutObjectCommand,
 } from "@aws-sdk/client-s3";
 
-import sharp from "sharp";
+import { processImage } from "./imageProcessor.js";
 
 const s3 = new S3Client({
   region: "ap-south-1",
@@ -13,16 +13,23 @@ const s3 = new S3Client({
 const ORIGINAL_BUCKET = process.env.ORIGINAL_BUCKET;
 const PROCESSED_BUCKET = process.env.PROCESSED_BUCKET;
 
-export const processImage = async (event) => {
+export const processImageHandler = async (event) => {
   console.log("Event received:", JSON.stringify(event, null, 2));
 
   const record = event.Records[0];
 
   const key = decodeURIComponent(record.s3.object.key.replace(/\+/g, " "));
-  const pathParts = key.split("/");
-  const jobId = pathParts[1];
 
   console.log("Processing:", key);
+
+  /*
+    Expected:
+    uploads/{jobId}-{filename}
+  */
+
+  const fileName = key.split("/").pop();
+
+  const jobId = fileName.split("-")[0];
 
   const image = await s3.send(
     new GetObjectCommand({
@@ -33,46 +40,64 @@ export const processImage = async (event) => {
 
   const buffer = await streamToBuffer(image.Body);
 
-  const processedBuffer = await sharp(buffer)
-    .resize({
-      width: 1200,
-      withoutEnlargement: true,
-    })
-    .jpeg({
-      quality: 70,
-    })
-    .toBuffer();
+  const { processedBuffer, thumbnailBuffer } = await processImage(buffer);
 
-  const fileName = key.split("/").pop();
-  const outputKey = `processed/${fileName}`;
+  const processedKey = `processed/${fileName}`;
+
+  const thumbnailKey = `thumbnails/${fileName}`;
 
   await s3.send(
     new PutObjectCommand({
       Bucket: PROCESSED_BUCKET,
-      Key: outputKey,
+      Key: processedKey,
       Body: processedBuffer,
       ContentType: "image/jpeg",
     }),
   );
-  await fetch(`${process.env.BACKEND_URL}/api/v1/jobs/${jobId}/complete`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-lambda-secret": process.env.LAMBDA_SECRET,
-    },
-    body: JSON.stringify({
-      processedKey: outputKey,
-      processedSize: processedBuffer.length,
-    }),
-  });
 
-  console.log("Uploaded:", outputKey);
+  await s3.send(
+    new PutObjectCommand({
+      Bucket: PROCESSED_BUCKET,
+      Key: thumbnailKey,
+      Body: thumbnailBuffer,
+      ContentType: "image/jpeg",
+    }),
+  );
+
+  console.log("Uploaded processed:", processedKey);
+
+  console.log("Uploaded thumbnail:", thumbnailKey);
+
+  if (process.env.BACKEND_URL && process.env.LAMBDA_SECRET) {
+    await fetch(`${process.env.BACKEND_URL}/api/v1/jobs/${jobId}/complete`, {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        "x-lambda-secret": process.env.LAMBDA_SECRET,
+      },
+
+      body: JSON.stringify({
+        processedKey,
+
+        thumbnailKey,
+
+        processedSize: processedBuffer.length,
+
+        thumbnailSize: thumbnailBuffer.length,
+      }),
+    });
+  }
 
   return {
     statusCode: 200,
+
     body: JSON.stringify({
       message: "Image processed successfully",
-      outputKey,
+
+      processedKey,
+
+      thumbnailKey,
     }),
   };
 };
