@@ -26,10 +26,10 @@ export const processImageHandler = async (event) => {
     Expected:
     uploads/{jobId}-{filename}
   */
-
   const fileName = key.split("/").pop();
 
   const jobId = fileName.split("-")[0];
+  await updateJobProcessingStatus(jobId);
 
   const image = await s3.send(
     new GetObjectCommand({
@@ -41,9 +41,7 @@ export const processImageHandler = async (event) => {
   const buffer = await streamToBuffer(image.Body);
 
   const { processedBuffer, thumbnailBuffer } = await processImage(buffer);
-
   const processedKey = `processed/${fileName}`;
-
   const thumbnailKey = `thumbnails/${fileName}`;
 
   await s3.send(
@@ -65,7 +63,6 @@ export const processImageHandler = async (event) => {
   );
 
   console.log("Uploaded processed:", processedKey);
-
   console.log("Uploaded thumbnail:", thumbnailKey);
 
   if (process.env.BACKEND_URL && process.env.LAMBDA_SECRET) {
@@ -79,11 +76,8 @@ export const processImageHandler = async (event) => {
 
       body: JSON.stringify({
         processedKey,
-
         thumbnailKey,
-
         processedSize: processedBuffer.length,
-
         thumbnailSize: thumbnailBuffer.length,
       }),
     });
@@ -91,15 +85,30 @@ export const processImageHandler = async (event) => {
 
   return {
     statusCode: 200,
-
     body: JSON.stringify({
       message: "Image processed successfully",
-
       processedKey,
-
       thumbnailKey,
     }),
   };
+};
+
+const updateJobProcessingStatus = async(jobId)=>{
+
+  await fetch(
+    `${process.env.BACKEND_URL}/api/v1/jobs/${jobId}/start`,
+    {
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json",
+        "x-lambda-secret":
+        process.env.LAMBDA_SECRET,
+      },
+
+    }
+  );
+
 };
 
 const streamToBuffer = async (stream) => {

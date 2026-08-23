@@ -9,6 +9,7 @@ import {
   deleteJob,
   getUploadUrl,
   completeJob,
+  startJob
 } from "../controllers/job.controllers.js";
 
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -16,14 +17,19 @@ import { optionalAuth} from "../middlewares/optionalAuth.middleware.js";
 
 const router = Router();
 
-// Guest Routes
-router.post("/upload", upload.single("image"), uploadImage);
-router.get("/:jobId/status", getJobStatus);
-router.get("/:jobId/download", downloadJob);
-router.get("/:jobId", getJob);
-router.post("/upload-url",optionalAuth, getUploadUrl);
+// router.post("/upload", upload.single("image"), uploadImage); //legacy code
+
+// Guest + Authenticate Routes
+router.get("/:jobId/status",optionalAuth, getJobStatus);
+router.get("/:jobId/download", optionalAuth, downloadJob);
+router.get("/:jobId", optionalAuth, getJob);
+router.post("/upload-url",optionalAuth, getUploadUrl); //
+
+// Lsmbda internal routes protected using LAMBDA SECRET
 router.post("/:jobId/complete", completeJob);
-// Protected Routes
+router.post("/:jobId/start", startJob);
+
+// Protected Routes for dashboard
 router.get("/", verifyJWT, getJobs);
 router.delete("/:jobId", verifyJWT, deleteJob);
 
