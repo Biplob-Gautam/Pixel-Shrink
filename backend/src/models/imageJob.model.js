@@ -24,10 +24,6 @@ const imageJobSchema = new mongoose.Schema(
         type: String,
         default: "",
       },
-      url: {
-        type: String,
-        default: "",
-      },
       size: Number,
       mimeType: String,
       width: Number,
@@ -36,7 +32,6 @@ const imageJobSchema = new mongoose.Schema(
 
     processedImage: {
       key: String,
-      url: String,
       size: Number,
       width: Number,
       height: Number,
@@ -44,7 +39,6 @@ const imageJobSchema = new mongoose.Schema(
 
     thumbnail: {
       key: String,
-      url: String,
       size: Number,
     },
 

@@ -13,6 +13,7 @@ import {
 import {
   generateUploadUrl,
   generateDownloadUrl,
+  deleteS3Object,
 } from "../services/s3.services.js";
 
 //need to add downloadJob -> needs s3 signed URL implementation first, deleteJob -> needs s3 and mongoDB deletion -- i guess done
@@ -100,6 +101,11 @@ const getUploadUrl = asyncHandler(async (req, res) => {
     processingOptions,
   });
 
+  // use this when applying guestUser cleanUp
+  // let key;
+  // if(owner)key=`users/${owner}/uploads/${job._id}-${fileName}`;
+  // else key=`guest/uploads/${job._id}-${fileName}`;
+  
   const key = `uploads/${job._id}-${fileName}`;
   job.originalImage.key = key;
 
@@ -165,6 +171,7 @@ const downloadJob = asyncHandler(async (req, res) => {
 
   const downloadUrl = await generateDownloadUrl({
     key: job.processedImage.key,
+    bucket: process.env.AWS_PROCESSED_BUCKET,
   });
 
   return res
@@ -181,7 +188,7 @@ const deleteJob = asyncHandler(async (req, res) => {
   // Delete original image
   if (job.originalImage?.key) {
     await deleteS3Object({
-      bucket: process.env.AWS_BUCKET_NAME,
+      bucket: process.env.AWS_ORIGINAL_BUCKET,
       key: job.originalImage.key,
     });
   }
