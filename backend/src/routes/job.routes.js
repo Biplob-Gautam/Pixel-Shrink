@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { upload } from "../config/multer.config.js";
 import {
-  uploadImage,
   getJobs,
   getJob,
   getJobStatus,
@@ -9,21 +8,21 @@ import {
   deleteJob,
   getUploadUrl,
   completeJob,
-  startJob
+  startJob,
 } from "../controllers/job.controllers.js";
 
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { optionalAuth} from "../middlewares/optionalAuth.middleware.js";
+import { optionalAuth } from "../middlewares/optionalAuth.middleware.js";
 
 const router = Router();
 
 // router.post("/upload", upload.single("image"), uploadImage); //legacy code
 
 // Guest + Authenticate Routes
-router.get("/:jobId/status",optionalAuth, getJobStatus);
+router.get("/:jobId/status", optionalAuth, getJobStatus);
 router.get("/:jobId/download", optionalAuth, downloadJob);
 router.get("/:jobId", optionalAuth, getJob);
-router.post("/upload-url",optionalAuth, getUploadUrl); //
+router.post("/upload-url", optionalAuth, getUploadUrl); //
 
 // Lsmbda internal routes protected using LAMBDA SECRET
 router.post("/:jobId/complete", completeJob);
