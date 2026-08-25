@@ -5,9 +5,12 @@ provider:
   runtime: nodejs22.x
   region: ap-south-1
 
-  environment:
-    ORIGINAL_BUCKET: pixelshrink-original-images
-    PROCESSED_BUCKET: pixelshrink-processed-images
+environment:
+
+  ORIGINAL_BUCKET: pixelshrink-original-images
+  PROCESSED_BUCKET: pixelshrink-processed-images
+  # BACKEND_URL: ${env:BACKEND_URL}
+  LAMBDA_SECRET: pixelshrink_lambda_secret_2026
 
   iam:
     role:

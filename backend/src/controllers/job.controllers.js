@@ -1,6 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { ApiError } from "../utils/api-error.js";
+import { checkJobAccess } from "../utils/checkJobAccess.js";
 
 import {
   createUploadJob,
@@ -70,9 +71,7 @@ const getJob = asyncHandler(async (req, res) => {
 
   // If job belongs to a user,
   // verify ownership.
-  if (job.owner && job.owner.toString() !== req.user?._id?.toString()) {
-    throw new ApiError(403, "You are not allowed to access this job");
-  }
+  checkJobAccess(job, req.user?._id);
 
   return res
     .status(200)
@@ -82,10 +81,12 @@ const getJob = asyncHandler(async (req, res) => {
 // Frontend polls this while Lambda processes image.
 const getJobStatus = asyncHandler(async (req, res) => {
   const job = await getJobStatusById(req.params.jobId);
-
   if (!job) throw new ApiError(404, "Job not found");
+  checkJobAccess(job, req.user?._id);
 
-  return res.status(200).json(new ApiResponse(200, job, "Job status fetched"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { status: job.status }, "Job status fetched"));
 });
 
 // Generates S3 presigned upload URL.
@@ -105,7 +106,7 @@ const getUploadUrl = asyncHandler(async (req, res) => {
   // let key;
   // if(owner)key=`users/${owner}/uploads/${job._id}-${fileName}`;
   // else key=`guest/uploads/${job._id}-${fileName}`;
-  
+
   const key = `uploads/${job._id}-${fileName}`;
   job.originalImage.key = key;
 
@@ -139,6 +140,11 @@ const completeJob = asyncHandler(async (req, res) => {
 
   if (!job) throw new ApiError(404, "Job not found");
 
+  if (job.status === "COMPLETED") {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, job, "Job already completed"));
+  }
   job.status = "COMPLETED";
 
   job.processedImage = {
@@ -164,8 +170,8 @@ const completeJob = asyncHandler(async (req, res) => {
 // for processed image stored in S3.
 const downloadJob = asyncHandler(async (req, res) => {
   const job = await getJobById(req.params.jobId);
-
   if (!job) throw new ApiError(404, "Job not found");
+  checkJobAccess(job, req.user?._id);
   if (!job.processedImage?.key)
     throw new ApiError(400, "Image not processed yet");
 
@@ -182,8 +188,8 @@ const downloadJob = asyncHandler(async (req, res) => {
 //used to delete job(s3 + mongo)
 const deleteJob = asyncHandler(async (req, res) => {
   const job = await getJobById(req.params.jobId);
-
   if (!job) throw new ApiError(404, "Job not found");
+  checkJobAccess(job, req.user._id);
 
   // Delete original image
   if (job.originalImage?.key) {

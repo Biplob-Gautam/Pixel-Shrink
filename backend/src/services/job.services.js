@@ -18,7 +18,7 @@ export const createUploadJob = async ({
     status: "UPLOADING",
     originalImage: { mimeType: contentType },
     processingOptions,
-    expiresAt: owner ? null : new Date(Date.now() + 24 * 60 * 60 * 1000), //if user is guest delete after 24 hours
+    expiresAt: owner ? null : new Date(Date.now() + 24 * 60 * 60 * 1000), //if user is guest delete after 24 hours will be used in version 2 
   });
 };
 
@@ -33,10 +33,8 @@ export const getJobById = async (jobId) => {
   return await ImageJob.findById(jobId);
 };
 
-// Deletes job document.
-// TODO:
-// Remove original/processed/thumbnail files
-// from S3 before deleting MongoDB record.
+// Deletes ImageJob MongoDB document.
+// S3 objects are removed in deleteJob controller before this call.
 export const deleteJobById = async (jobId) => {
   return await ImageJob.findByIdAndDelete(jobId);
 };
@@ -44,5 +42,5 @@ export const deleteJobById = async (jobId) => {
 // Returns only current processing status.
 // Used by frontend polling.
 export const getJobStatus = async (jobId) => {
-  return await ImageJob.findById(jobId).select("status");
+  return await ImageJob.findById(jobId).select("status owner");
 };
